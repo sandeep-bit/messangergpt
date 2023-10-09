@@ -9,14 +9,19 @@ const openai = new OpenAI({
 
 export const chatCompletion = async (text: string): Promise<openAiResponse> => {
   try {
-    const response = await openai.chat.completions.create({
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "user", content: text },
+      ],
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: text }],
-    });
-    let content = response.choices[0].message.content;
+    };
+    const content: OpenAI.Chat.ChatCompletion =
+      await openai.chat.completions.create(params);
+
     return {
       status: 1,
-      response: content,
+      response: content.choices[0].message.content,
     };
   } catch (error) {
     return {
